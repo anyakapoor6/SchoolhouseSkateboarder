@@ -41,7 +41,7 @@ class GameScene: SKScene {
         skater.minimumY = skaterY
     }
     
-    func spwanBrick(atPosition position: CGPoint) -> SKSpriteNode {
+    func spawnBrick(atPosition position: CGPoint) -> SKSpriteNode {
         let brick = SKSpriteNode(imageNamed: "sidewalk")
         brick.position = position
         brick.zPosition = 8
@@ -73,6 +73,22 @@ class GameScene: SKScene {
                     farthestRightBrickX = brick.position.x
                 }
             }
+        }
+        
+        while farthestRightBrickX < frame.width {
+            var brickX = farthestRightBrickX + brickSize.width + 1.0
+            var brickY = brickSize.height / 2.0
+            
+            let randomNumber = arc4random_uniform(99)
+            
+            if randomNumber < 5 {
+                
+                let gap = 20.0 * scrollSpeed
+                brickX += gap
+            }
+            
+            let newBrick = spawnBrick(atPosition: CGPoint(x: brickX, y: brickY))
+            farthestRightBrickX = newBrick.position.x
         }
     }
     override func update(_ currentTime: TimeInterval) {
