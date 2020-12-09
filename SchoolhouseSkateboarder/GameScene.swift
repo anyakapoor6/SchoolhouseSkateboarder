@@ -52,6 +52,29 @@ class GameScene: SKScene {
         return brick
     }
         
+    func updateBricks(withScrollAmount currentScrollAmount: CGFloat) {
+        var farthestRightBrickX: CGFloat = 0.0
+        
+        for brick in bricks {
+            
+            let newX = brick.position.x - currentScrollAmount
+            
+            if newX < -brickSize.width {
+                brick.removeFromParent()
+                
+                if let brickIndex = bricks.firstIndex(of: brick){
+                    bricks.remove(at: brickIndex)
+                }
+            } else {
+                
+                brick.position = CGPoint(x: newX, y: brick.position.y)
+                
+                if brick.position.x > farthestRightBrickX {
+                    farthestRightBrickX = brick.position.x
+                }
+            }
+        }
+    }
     override func update(_ currentTime: TimeInterval) {
         // Called before each frame is rendered
     }
