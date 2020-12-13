@@ -14,6 +14,8 @@ class GameScene: SKScene {
     var bricks = [SKSpriteNode]()
     var brickSize = CGSize.zero
     var scrollSpeed: CGFloat = 5.0
+    let gravitySpeed: CGFloat = 1.5
+    var lastUpdateTime: TimeInterval?
     
     let skater = Skater(imageNamed: "skater")
     
@@ -29,6 +31,10 @@ class GameScene: SKScene {
         
         resetSkater()
         addChild(skater)
+        
+        let tapMethod = #selector(GameScene.handleTap(tapGesture:))
+        let tapGesture = UITapGestureRecognizer(target: self, action: tapMethod)
+        view.addGestureRecognizer(tapGesture)
     
     }
     
@@ -74,6 +80,7 @@ class GameScene: SKScene {
                 }
             }
         }
+
         
         while farthestRightBrickX < frame.width {
             var brickX = farthestRightBrickX + brickSize.width + 1.0
@@ -91,7 +98,41 @@ class GameScene: SKScene {
             farthestRightBrickX = newBrick.position.x
         }
     }
+    
+    func updateSkater() {
+        if !skater.isOnGround {
+            let velocityY = skater.velocity.y - gravitySpeed
+            skater.velocity = CGPoint(x: skater.velocity.x, y: velocityY)
+            let newSkaterY: CGFloat = skater.position.y + skater.velocity.y
+            skater.position = CGPoint(x: skater.position.x, y: newSkaterY)
+            
+            if skater.position.y < skater.minimumY {
+                skater.position.y = skater.minimumY
+                skater.velocity = CGPoint.zero
+                skater.isOnGround = true
+            }
+        }
+    }
+    
     override func update(_ currentTime: TimeInterval) {
-        // Called before each frame is rendered
+        var elapsedTime: TimeInterval = 0.0
+        if let lastTimeStamp = lastUpdateTime {
+            elapsedTime = currentTime - lastTimeStamp
+        }
+        lastUpdateTime = currentTime
+        let expectedElapsedTime: TimeInterval = 1.0 / 60.0
+        let scrollAdjustment = CGFloat(elapsedTime / expectedElapsedTime)
+        let currentScrollAmount = scrollSpeed * scrollAdjustment
+        
+        updateBricks(withScrollAmount: currentScrollAmount)
+        
+        updateSkater()
+    }
+    
+    @objc func handleTap(tapGesture: UITapGestureRecognizer) {
+        if skater.isOnGround {
+            skater.velocity = CGPoint(x: 0.0, y: skater.jumpSpeed)
+            skater.isOnGround = false
+        }
     }
 }
