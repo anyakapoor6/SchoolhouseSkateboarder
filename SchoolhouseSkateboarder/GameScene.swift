@@ -9,6 +9,12 @@
 import SpriteKit
 import GameplayKit
 
+struct PhysicsCategory {
+    static let skater: UInt32 = 0x1 << 0
+    static let brick: UInt32 = 0x1 << 1
+    static let gem: UInt32 = 0x1 << 2
+}
+
 class GameScene: SKScene {
  
     var bricks = [SKSpriteNode]()
@@ -21,6 +27,8 @@ class GameScene: SKScene {
     
     override func didMove(to view: SKView) {
     
+        physicsWorld.gravity = CGVector(dx: 0.0, dy: -6.0)
+        
         anchorPoint = CGPoint.zero
         
         let background = SKSpriteNode(imageNamed: "background")
@@ -28,7 +36,7 @@ class GameScene: SKScene {
         let yMid = frame.midY
         background.position = CGPoint(x: xMid, y: yMid)
         addChild(background)
-        
+        skater.setupPhysicsBody()
         resetSkater()
         addChild(skater)
         
@@ -55,8 +63,15 @@ class GameScene: SKScene {
         
         brickSize = brick.size
         bricks.append(brick)
+        
+        let center = brick.centerRect.origin
+        brick.physicsBody = SKPhysicsBody(rectangleOf: brick.size, center: center)
+        brick.physicsBody?.affectedByGravity = false
+        brick.physicsBody?.categoryBitMask = PhysicsCategory.skater
+        brick.physicsBody?.collisionBitMask = 0
         return brick
     }
+    
         
     func updateBricks(withScrollAmount currentScrollAmount: CGFloat) {
         var farthestRightBrickX: CGFloat = 0.0
