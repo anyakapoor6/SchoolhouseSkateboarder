@@ -28,6 +28,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var scrollSpeed: CGFloat = 5.0
     let startingScrollSpeed: CGFloat = 5.0
     let gravitySpeed: CGFloat = 1.5
+    var score: Int = 0
+    var highScore: Int = 0
+    var lastScoreUpdateTime: TimeInterval = 0.0
     var lastUpdateTime: TimeInterval?
     
     let skater = Skater(imageNamed: "skater")
@@ -103,11 +106,23 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         highScoreLabel.zPosition = 20
         addChild(highScoreLabel)
         
-        
+    }
+    
+    func updateScoreLabelText() {
+        if let scoreLabel = childNode(withName: "scoreLabel") as? SKLabelNode {
+            scoreLabel.text = String(format: "%04d", score)
+        }
+    }
+    
+    func updateHighScoreLabelText() {
+        if let highScoreLabel = childNode(withName: "highScoreLabel") as? SKLabelNode {
+            highScoreLabel.text = String(format: "%04d", highScore)
+        }
     }
     
     func startGame() {
         resetSkater()
+        score = 0
         scrollSpeed = startingScrollSpeed
         brickLevel = .low
         lastUpdateTime = nil
@@ -122,6 +137,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     func gameOver() {
+        if score > highScore {
+            highScore = score
+            updateHighScoreLabelText()
+        }
         startGame()
     }
     
@@ -137,6 +156,15 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 skater.velocity = CGPoint.zero
                 skater.isOnGround = true
             }
+        }
+    }
+    
+    func updateScore(withCurrentTime currentTime: TimeInterval) {
+        let elapsedTime = currentTime - lastScoreUpdateTime
+        if elapsedTime > 1.0 {
+            score += Int(scrollSpeed)
+            lastScoreUpdateTime = currentTime
+            updateScoreLabelText()
         }
     }
     
@@ -198,7 +226,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 }
             }
         }
-
+    
     
         func updateGems(withScrollAmount currentScrollAmount: CGFloat) {
             for gem in gems {
@@ -217,18 +245,18 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
             let randomNumber = arc4random_uniform(99)
             
-            if randomNumber < 5 {
-                
+            if randomNumber < 2 && score > 10 {
                 let gap = 20.0 * scrollSpeed
                 brickX += gap
-                
+                               
                 let randomGemYAmount = CGFloat(arc4random_uniform(150))
                 let newGemY = brickY + skater.size.height + randomGemYAmount
                 let newGemX = brickX - gap / 2.0
                 spawnGem(atPosition: CGPoint(x: newGemX, y: newGemY))
             }
+        
             
-            else if randomNumber < 10 {
+            else if randomNumber < 4 && score > 20 {
                 if brickLevel == .high {
                     brickLevel = .low
                 }
@@ -240,11 +268,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             let newBrick = spawnBrick(atPosition: CGPoint(x: brickX, y: brickY))
             farthestRightBrickX = newBrick.position.x
         }
-    }
+    
     
 
     
-    override func update(_ currentTime: TimeInterval) {
+    func update(_ currentTime: TimeInterval) {
         scrollSpeed += 0.001
         var elapsedTime: TimeInterval = 0.0
         if let lastTimeStamp = lastUpdateTime {
@@ -256,11 +284,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let currentScrollAmount = scrollSpeed * scrollAdjustment
         
         updateBricks(withScrollAmount: currentScrollAmount)
-        
+        updateGems(withScrollAmount: currentScrollAmount)
+        updateScore(withCurrentTime: currentTime)
         updateSkater()
     }
     
-    @objc func handleTap(tapGesture: UITapGestureRecognizer) {
+    func handleTap(tapGesture: UITapGestureRecognizer) {
         if skater.isOnGround {
             skater.physicsBody?.applyImpulse(CGVector(dx: 0.0, dy: 260.0))
         }
@@ -274,7 +303,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         else if contact.bodyA.categoryBitMask == PhysicsCategory.skater && contact.bodyB.categoryBitMask == PhysicsCategory.gem {
             if let gem = contact.bodyB.node as? SKSpriteNode {
                 removeGem(gem)
+                score += 50
+                updateScoreLabelText()
             }
         }
     }
+}
 }
