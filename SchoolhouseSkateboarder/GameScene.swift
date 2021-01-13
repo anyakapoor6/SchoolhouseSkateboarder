@@ -43,6 +43,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let yMid = frame.midY
         background.position = CGPoint(x: xMid, y: yMid)
         addChild(background)
+        setupLabels()
         skater.setupPhysicsBody()
         addChild(skater)
         
@@ -64,6 +65,45 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         skater.zRotation = 0.0
         skater.physicsBody?.velocity = CGVector(dx: 0.0, dy: 0.0)
         skater.physicsBody?.angularVelocity = 0.0
+    }
+    
+    func setupLabels() {
+        
+        let scoreTextLabel: SKLabelNode = SKLabelNode(text: "score")
+        scoreTextLabel.position = CGPoint(x: 14.0, y: frame.size.height - 20.0)
+        scoreTextLabel.horizontalAlignmentMode = .left
+        scoreTextLabel.fontName = "Courier-Bold"
+        scoreTextLabel.fontSize = 14.0
+        scoreTextLabel.zPosition = 20
+        addChild(scoreTextLabel)
+        
+        let scoreLabel: SKLabelNode = SKLabelNode(text: "0")
+        scoreLabel.position = CGPoint(x: 14.0, y: frame.size.height - 40.0)
+        scoreLabel.horizontalAlignmentMode = .left
+        scoreLabel.fontName = "Courier-Bold"
+        scoreLabel.fontSize = 18.0
+        scoreLabel.name = "scoreLabel"
+        scoreLabel.zPosition = 20
+        addChild(scoreLabel)
+        
+        let highScoreTextlabel: SKLabelNode = SKLabelNode(text: "high score")
+        highScoreTextlabel.position = CGPoint(x: frame.size.width - 14.0, y: frame.size.height - 20.0)
+        highScoreTextlabel.horizontalAlignmentMode = .right
+        highScoreTextlabel.fontName = "Courier-Bold"
+        highScoreTextlabel.fontSize = 14.0
+        highScoreTextlabel.zPosition = 20
+        addChild(highScoreTextlabel)
+        
+        let highScoreLabel: SKLabelNode = SKLabelNode(text: "0")
+        highScoreLabel.position = CGPoint(x: frame.size.width - 14.0, y: frame.size.height - 40.0)
+        highScoreLabel.horizontalAlignmentMode = .right
+        highScoreLabel.fontName = "Courier-Bold"
+        highScoreLabel.fontSize = 18.0
+        highScoreLabel.name = "highScoreLabel"
+        highScoreLabel.zPosition = 20
+        addChild(highScoreLabel)
+        
+        
     }
     
     func startGame() {
@@ -205,7 +245,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 
     
     override func update(_ currentTime: TimeInterval) {
-        scrollSpeed += 0.01
+        scrollSpeed += 0.001
         var elapsedTime: TimeInterval = 0.0
         if let lastTimeStamp = lastUpdateTime {
             elapsedTime = currentTime - lastTimeStamp
