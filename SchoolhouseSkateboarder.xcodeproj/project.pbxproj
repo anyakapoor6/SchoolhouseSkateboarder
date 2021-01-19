@@ -16,6 +16,7 @@
 		C131C5F6257742CE00BD2741 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C131C5F5257742CE00BD2741 /* Assets.xcassets */; };
 		C131C5F9257742CE00BD2741 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C131C5F7257742CE00BD2741 /* LaunchScreen.storyboard */; };
 		C15DB678258077280066B7DB /* Skater.swift in Sources */ = {isa = PBXBuildFile; fileRef = C15DB677258077280066B7DB /* Skater.swift */; };
+		C177D03025B69DBA00D320C6 /* MenuLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C177D02F25B69DBA00D320C6 /* MenuLayer.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -30,6 +31,7 @@
 		C131C5F8257742CE00BD2741 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		C131C5FA257742CE00BD2741 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C15DB677258077280066B7DB /* Skater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Skater.swift; sourceTree = "<group>"; };
+		C177D02F25B69DBA00D320C6 /* MenuLayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuLayer.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -72,6 +74,7 @@
 				C131C5F7257742CE00BD2741 /* LaunchScreen.storyboard */,
 				C131C5FA257742CE00BD2741 /* Info.plist */,
 				C15DB677258077280066B7DB /* Skater.swift */,
+				C177D02F25B69DBA00D320C6 /* MenuLayer.swift */,
 			);
 			path = SchoolhouseSkateboarder;
 			sourceTree = "<group>";
@@ -151,6 +154,7 @@
 			files = (
 				C131C5EF257742BE00BD2741 /* GameScene.swift in Sources */,
 				C15DB678258077280066B7DB /* Skater.swift in Sources */,
+				C177D03025B69DBA00D320C6 /* MenuLayer.swift in Sources */,
 				C131C5F1257742BE00BD2741 /* GameViewController.swift in Sources */,
 				C131C5E9257742BE00BD2741 /* AppDelegate.swift in Sources */,
 			);
