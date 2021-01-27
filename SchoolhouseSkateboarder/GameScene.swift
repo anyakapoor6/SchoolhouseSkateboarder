@@ -63,7 +63,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let menuBackgroundColor = UIColor.black.withAlphaComponent(0.4)
         let menuLayer = MenuLayer(color: menuBackgroundColor, size: frame.size)
         menuLayer.anchorPoint = CGPoint(x: 0.0, y: 0.0)
-        menuLayer.position = CGPoint(x: 0.0, y: 0.0)
+        menuLayer.position = CGPoint (x: 0.0, y: 0.0)
         menuLayer.zPosition = 30
         menuLayer.name = "menuLayer"
         menuLayer.display(message: "Tap to play", score: nil)
@@ -290,11 +290,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             let newBrick = spawnBrick(atPosition: CGPoint(x: brickX, y: brickY))
             farthestRightBrickX = newBrick.position.x
         }
-    
+    }
     
 
     
-    func update(_ currentTime: TimeInterval) {
+    override func update(_ currentTime: TimeInterval) {
         if gameState != .running {
             return
         }
@@ -309,16 +309,16 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let currentScrollAmount = scrollSpeed * scrollAdjustment
         
         updateBricks(withScrollAmount: currentScrollAmount)
-        updateGems(withScrollAmount: currentScrollAmount)
-        updateScore(withCurrentTime: currentTime)
+
         updateSkater()
     }
     
-    func handleTap(tapGesture: UITapGestureRecognizer) {
+    @objc func handleTap(tapGesture: UITapGestureRecognizer) {
         
         if gameState == . running {
             if skater.isOnGround {
                 skater.physicsBody?.applyImpulse(CGVector(dx: 0.0, dy: 260.0))
+                run(SKAction.playSoundFileNamed("jump.wav", waitForCompletion: false))
             }
         } else {
             if let menuLayer: SKSpriteNode = childNode(withName: "menuLayer") as? SKSpriteNode {
@@ -332,6 +332,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     func didBegin(_ contact: SKPhysicsContact){
         if contact.bodyA.categoryBitMask == PhysicsCategory.skater && contact.bodyB.categoryBitMask == PhysicsCategory.brick {
+            if let velocityY = skater.physicsBody?.velocity.dy {
+                if !skater.isOn && velocityY < 100.0 {
+                    skater.createSparks()
+                }
+            }
+            
             skater.isOnGround = true
         }
         
@@ -340,8 +346,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 removeGem(gem)
                 score += 50
                 updateScoreLabelText()
+                run(SKAction.playSoundFileNamed("gem.wav", waitForCompletion: false))
             }
         }
     }
-}
-}
+ }
+
+
